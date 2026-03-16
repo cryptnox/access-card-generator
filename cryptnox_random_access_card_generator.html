@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'none';
-    script-src 'self' 'sha256-oPe60omGaXHr4Rxtvtluw/hIxpFtRMDwLR8HuaL06kg=' 'sha256-xB5+CnZ0X+4Z4SScAC9jVlEaxqk+8fV21OOqEdfWQbU=' 'sha256-IRJQaJA3iRsMXb4Nkj9U483KZhSPCBNtyEtzVeHm/FM=' 'sha256-ExuJ+x+ks06E4tmoq7CRWpwtekQNg3iAuS7YXsi1vlU=';
+    script-src 'self' 'sha256-oPe60omGaXHr4Rxtvtluw/hIxpFtRMDwLR8HuaL06kg=' 'sha256-xB5+CnZ0X+4Z4SScAC9jVlEaxqk+8fV21OOqEdfWQbU=' 'sha256-IRJQaJA3iRsMXb4Nkj9U483KZhSPCBNtyEtzVeHm/FM=' 'sha256-Akl2Ya73albmC9XSJptr7htbUcGXsDJvQz6S2zwNiu4=';
     style-src 'self' 'unsafe-inline';
     img-src 'self' data: blob:;
     font-src 'self' data:;
@@ -392,50 +392,51 @@
 
     .card-front-print {
       position: absolute;
-      width: 600px;
-      height: 350px;
+      width: 85.60mm;
+      height: 53.98mm;
       backface-visibility: hidden;
-      border-radius: 15px;
+      border-radius: 2mm;
       display: flex;
       flex-direction: column;
-      padding: 20px;
+      padding: 3mm;
       background: white;
       color: white;
-      border: 2px solid #333;
+      border: 0.3mm solid #333;
     }
 
-    /* Print styles - ensure only card-front-print is visible */
+    /* Print styles - two cards per page */
     @media print {
       @page {
-        size: A4;
+        size: A4 portrait;
         margin: 0.5in;
       }
 
-      body * {
-        visibility: hidden !important;
+      body > *:not(.print-two-up) {
+        display: none !important;
       }
 
-      .card-front-print,
-      .card-front-print * {
-        visibility: visible !important;
-      }
-
-      svg,
-      svg * {
-        visibility: visible !important;
-      }
-
-      .card-front-print {
-        position: static !important;
-        display: block !important;
-        margin: 0 auto !important;
-        width: 600px !important;
-        height: 350px !important;
-        border: 2px solid #000 !important;
-        padding: 20px !important;
+      .print-two-up {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 20mm !important;
+        width: 100% !important;
+        min-height: calc(297mm - 1in) !important;
         box-sizing: border-box !important;
         background: white !important;
-        page-break-after: avoid !important;
+      }
+
+      .print-two-up .card-front-print {
+        position: static !important;
+        display: flex !important;
+        margin: 0 !important;
+        width: 85.60mm !important;
+        height: 53.98mm !important;
+        border: 0.3mm solid #000 !important;
+        padding: 3mm !important;
+        box-sizing: border-box !important;
+        background: white !important;
         page-break-inside: avoid !important;
       }
     }
@@ -463,19 +464,19 @@
       flex-direction: column;
       text-align: start;
       align-self: flex-start;
-      margin-top: 50px;
-      margin-left: 10px;
+      margin-top: 8mm;
+      margin-left: 1.5mm;
     }
 
     .card-subtitle-pin-puk {
-      font-size: 1.5rem;
+      font-size: 3.5mm;
       font-weight: 500;
       color: black;
-      margin-bottom: 5px;
+      margin-bottom: 0.8mm;
     }
 
     .card-subtitle-access-card {
-      font-size: 2rem;
+      font-size: 4.5mm;
       font-weight: 600;
       color: black;
     }
@@ -543,25 +544,24 @@
     }
 
     .card-title img {
-      width: 250px;
+      width: 36mm;
       height: auto;
     }
 
     .qr-section-print {
       display: flex;
-      align-items: flex-end;
       flex-direction: row;
-      align-items: start;
-      margin-top: 35px;
-      margin-left: 10px;
-      gap: 10px;
+      align-items: flex-end;
+      margin-top: 5mm;
+      margin-left: 1.5mm;
+      gap: 1.5mm;
       width: 100%;
       height: 100%;
     }
 
     .qr-code-print {
-      width: 100px;
-      height: 100px;
+      width: 14mm;
+      height: 14mm;
       background: white;
       border-radius: 0;
       border: 2px solid #000000;
@@ -581,13 +581,13 @@
     }
 
     .codes-section-print {
-      height: 100px;
+      height: 14mm;
       display: flex;
       justify-content: end;
       flex-direction: column;
       text-align: left;
-      margin-left: 20px;
-      gap: 10px;
+      margin-left: 3mm;
+      gap: 1.5mm;
     }
 
     .code-item-print {
@@ -597,9 +597,9 @@
     }
 
     .code-value-print {
-      font-size: 1rem;
+      font-size: 2.3mm;
       font-weight: 500;
-      letter-spacing: 1px;
+      letter-spacing: 0.1mm;
       color: black;
       text-align: left;
     }
@@ -1691,23 +1691,23 @@
         format: "a4"
       });
 
-      // Card layout size
-      const cardW = 120;
-      const cardH = 70;
-      const x = 50, y = 60;
+      // ISO/IEC 7810 ID-1 card size (A4 = 210x297mm)
+      const cardW = 85.60;
+      const cardH = 53.98;
+      const x = (210 - cardW) / 2; // centered horizontally
 
-      // Draw card border
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.5);
-      doc.roundedRect(x, y, cardW, cardH, 3, 3);
+      // Two cards vertically centered with a 20mm gap
+      const gap = 20;
+      const y1 = (297 - (2 * cardH + gap)) / 2;
+      const y2 = y1 + cardH + gap;
 
-      // 1. Get the image element
+      // 1. Get the image elements
       const cardFrontLogo = document.getElementById("card-front-print-logo");
-      const qrCode = document.getElementById("qr-code-print")
-      const pinDisplay = document.getElementById("pinDisplay-print")
-      const pukDisplay = document.getElementById("pukDisplay-print")
+      const qrCode = document.getElementById("qr-code-print");
+      const pinDisplay = document.getElementById("pinDisplay-print");
+      const pukDisplay = document.getElementById("pukDisplay-print");
 
-      // 2. Draw it to canvas to extract base64
+      // 2. Draw to canvas to extract base64
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       canvas.width = cardFrontLogo.naturalWidth;
@@ -1722,15 +1722,13 @@
 
       // 3. Convert canvas to Base64
       const imgData = canvas.toDataURL("image/png");
-
       const imgDataQrCode = canvasQrCode.toDataURL("image/png");
 
-      // Max width/height you want for the image
-      const maxWidthLogo = 45;
-      const maxHeightLogo = 8.55;
-
-      const maxWidthQrCode = 50;
-      const maxHeightQrCode = 50;
+      // Max dimensions scaled to ISO/IEC 7810 card size
+      const maxWidthLogo = 32;
+      const maxHeightLogo = 6.1;
+      const maxWidthQrCode = 40;
+      const maxHeightQrCode = 40;
 
       // Scale proportionally
       let imgWidthLogo = cardFrontLogo.naturalWidth;
@@ -1745,29 +1743,38 @@
       imgWidthQrCode *= ratioQrCode;
       imgWidthQrCode *= ratioQrCode;
 
-      // Position (centered top-left at 10,10 for example)
-      doc.addImage(imgData, "PNG", 115, 65, imgWidthLogo, imgHeightLogo);
+      // Draw one card at the given y position
+      function drawCard(y) {
+        doc.setDrawColor(0);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(x, y, cardW, cardH, 2, 2);
 
-      doc.addImage(imgDataQrCode, "PNG", 55, 105, imgWidthQrCode, imgWidthQrCode);
+        // Logo (top-right area)
+        doc.addImage(imgData, "PNG", x + 46, y + 4, imgWidthLogo, imgHeightLogo);
 
-      // Subtitles
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-      doc.text("PIN PUK", x + 5, y + 30);
+        // QR code — bottom edge aligned with PUK baseline (y + 50)
+        const qrY = y + 50 - imgWidthQrCode;
+        doc.addImage(imgDataQrCode, "PNG", x + 3.5, qrY, imgWidthQrCode, imgWidthQrCode);
 
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(18);
-      doc.text("ACCESS CARD", x + 5, y + 37);
+        // Subtitles
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.text("PIN PUK", x + 3.5, y + 23);
 
-      // PIN / PUK text
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.text(pinDisplay.textContent, x + 30, y + 57, {
-        charSpace: 0.2
-      });
-      doc.text(pukDisplay.textContent, x + 30, y + 65, {
-        charSpace: 0.2
-      });
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(13);
+        doc.text("ACCESS CARD", x + 3.5, y + 28.5);
+
+        // PIN / PUK values
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.text(pinDisplay.textContent, x + 21, y + 44, { charSpace: 0.1 });
+        doc.text(pukDisplay.textContent, x + 21, y + 50, { charSpace: 0.1 });
+      }
+
+      // Draw two cards per page
+      drawCard(y1);
+      drawCard(y2);
 
       // Save
       doc.save("Cryptnox Access Card.pdf");
@@ -1783,89 +1790,31 @@
     // Print card functionality
     function printCard() {
       try {
-
         if (isMobile()) {
-          // Use the mobile-friendly method
           printCardMobile();
         } else {
-          const cardElement = document.getElementById("accessCard");
-          const cardContainer = document.getElementById("cardContainer");
+          const cardFront = document.querySelector(".card-front-print");
 
-          // Make sure card is on front side for printing
-          const isFlipped = cardElement.classList.contains("flipped");
-          if (isFlipped) {
-            cardElement.classList.remove("flipped");
-          }
+          // Clone the card twice for two-up layout
+          const clone1 = cardFront.cloneNode(true);
+          const clone2 = cardFront.cloneNode(true);
+          clone1.style.display = "";
+          clone2.style.display = "";
 
-          // Create print styles
-          const printStyles = document.createElement("style");
-          printStyles.textContent = `
-            @media print {
-                @page { size: portrait; }
-                body > *:not(.container) {
-                  display: none !important;
-                }
-                svg, svg * { display: none !important; }
-                #cardContainer.print-card * {
-                    visibility: visible !important;
-                }
-                #cardContainer.print-card {
-                    position: absolute;
-                    left: 50%;
-                    top: 50%;
-                    width: 600px;
-                    height: 350px;
-                    margin: 0;
-                    padding: 0;
-                    background: white;
-                    transform: translate(-50%, -50%) !important;
-                }
-                #cardContainer.print-card .access-card {
-                    display: none !important;
-                }
-                #cardContainer.print-card .card-front-print {
-                    display: block !important;
-                    position: absolute;
-                    width: 600px;
-                    height: 350px;
-                    box-shadow: none;
-                    border: 2px solid #000000 !important;
-                    border-width: 2px !important;
-                    padding: 20px;
-                    overflow: hidden;
-                }
-                #cardContainer.print-card .qr-section-print {
-                    position: absolute;
-                    bottom: 70px;
-                    left: 30px;
-                    display: flex;
-                    align-items: flex-end;
-                    gap: 10px;
-                }
-                #cardContainer.print-card .card-back {
-                    display: none !important;
-                }
-                #cardContainer.print-card #qrCode-print img {
-                    width: 100%;
-                    height: 100%;
-                }
-            }`;
-          document.head.appendChild(printStyles);
-
-          // Add print class to card container
-          cardContainer.classList.add("print-card");
+          const wrapper = document.createElement("div");
+          wrapper.className = "print-two-up";
+          wrapper.appendChild(clone1);
+          wrapper.appendChild(clone2);
+          document.body.appendChild(wrapper);
 
           const cleanup = () => {
-            cardContainer.classList.remove("print-card");
-            if (document.head.contains(printStyles)) {
-              document.head.removeChild(printStyles);
+            if (document.body.contains(wrapper)) {
+              document.body.removeChild(wrapper);
             }
-            if (isFlipped) cardElement.classList.add("flipped");
             window.removeEventListener("afterprint", cleanup);
           };
 
           window.addEventListener("afterprint", cleanup);
-
           window.print();
         }
       } catch (error) {
@@ -1928,63 +1877,61 @@
           return;
         }
 
+        // Clone the card twice for two-up layout
+        const clone1 = cardFront.cloneNode(true);
+        const clone2 = cardFront.cloneNode(true);
+        clone1.style.display = "";
+        clone2.style.display = "";
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "print-two-up";
+        wrapper.appendChild(clone1);
+        wrapper.appendChild(clone2);
+        document.body.appendChild(wrapper);
+
         // Store original states for restoration
         const originalStates = new Map();
 
-        // Get all elements in the document
+        // Hide all elements except the wrapper
         const allElements = document.querySelectorAll('*');
-        let hiddenCount = 0;
         allElements.forEach(element => {
-
-          // Skip the card-front-print element and its children
-          // Also skip essential elements like html, head, body, and the container
-          // Also skip all SVG elements
           const isEssentialElement = element === document.documentElement ||
             element === document.head ||
             element === document.body ||
-            element.classList.contains('card-front-print') ||
-            element.classList.contains('container') ||
-            element.classList.contains('card-and-actions') ||
-            element.classList.contains('card-container') ||
-            cardFront.contains(element);
+            element === wrapper ||
+            wrapper.contains(element);
 
           if (!isEssentialElement) {
-            // Store original display state if not already stored
             if (!originalStates.has(element)) {
               originalStates.set(element, element.style.display);
               element.style.display = 'none';
-              hiddenCount++;
             }
           }
         });
-
-        cardFront.style.display = 'block';
 
         // Print
         window.print();
 
         // Function to restore original state
         function restoreOriginalState() {
+          if (document.body.contains(wrapper)) {
+            document.body.removeChild(wrapper);
+          }
           originalStates.forEach((originalDisplay, element) => {
             element.style.display = originalDisplay;
           });
-          cardFront.style.display = 'none';
         }
 
         // Detect when print dialog is closed
         let printDialogClosed = false;
 
-        // Check if mobile browser
         const isMobileBrowser = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         if (isMobileBrowser) {
-          // Mobile-specific detection
-          document.addEventListener("touchstart", (event) => {
+          document.addEventListener("touchstart", () => {
             restoreOriginalState();
           });
         } else {
-          // Desktop detection methods
-          // Use focus event to detect when user returns from print dialog
           const handleFocus = () => {
             if (!printDialogClosed) {
               printDialogClosed = true;
@@ -1993,17 +1940,14 @@
             }
           };
 
-          // Fallback timeout (in case events don't fire)
           const fallbackTimeout = setTimeout(() => {
             if (!printDialogClosed) {
               printDialogClosed = true;
               restoreOriginalState();
               window.removeEventListener('focus', handleFocus);
-              window.removeEventListener('afterprint', handleAfterPrint);
             }
           }, 100);
 
-          // Add desktop event listeners
           window.addEventListener('focus', handleFocus);
         }
 
