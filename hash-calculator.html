@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSP Hash Calculator</title>
+  <style>
+    body { font-family: monospace; background: #1a1a1a; color: #e0e0e0; padding: 24px; max-width: 900px; margin: 0 auto; }
+    h1 { color: #8bc2f8; font-size: 1.2rem; margin-bottom: 24px; }
+    .drop-zone {
+      border: 2px dashed #8bc2f8;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .drop-zone:hover, .drop-zone.active { background: #2a2a2a; }
+    .drop-zone input { display: none; }
+    .result { margin-top: 24px; }
+    .script-block {
+      background: #222;
+      border: 1px solid #333;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .script-header {
+      background: #2a2a2a;
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      color: #888;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .hash-line {
+      padding: 12px 16px;
+      color: #8bc2f8;
+      word-break: break-all;
+      font-size: 0.85rem;
+    }
+    .copy-btn {
+      background: #333;
+      border: 1px solid #555;
+      color: #e0e0e0;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-family: monospace;
+    }
+    .copy-btn:hover { background: #444; }
+    .csp-output {
+      background: #222;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 8px;
+      word-break: break-all;
+      font-size: 0.8rem;
+      line-height: 1.8;
+      color: #a0d0a0;
+    }
+    .csp-label { color: #888; font-size: 0.75rem; margin-top: 24px; margin-bottom: 8px; }
+    .copy-all-btn {
+      background: #8bc2f8;
+      color: #1a1a1a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 0.85rem;
+      margin-top: 12px;
+    }
+    .copy-all-btn:hover { background: #6aaae0; }
+    .empty { color: #666; font-size: 0.85rem; text-align: center; padding: 16px; }
+    .preview {
+      color: #555;
+      font-size: 0.75rem;
+      padding: 8px 16px;
+      border-top: 1px solid #333;
+      max-height: 40px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #8bc2f8;
+      color: #1a1a1a;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <h1>CSP Hash Calculator</h1>
+
+  <div class="drop-zone" id="dropZone">
+    <p>Drag and drop a <strong>.html</strong> file here</p>
+    <p style="color:#666; font-size:0.85rem;">or click to select</p>
+    <input type="file" id="fileInput" accept=".html,.htm">
+  </div>
+
+  <div class="result" id="result"></div>
+  <div class="toast" id="toast">Copied!</div>
+
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const result = document.getElementById('result');
+    const toast = document.getElementById('toast');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', e => processFile(e.target.files[0]));
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('active'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('active'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('active');
+      processFile(e.dataTransfer.files[0]);
+    });
+
+    function showToast(msg) {
+      toast.textContent = msg || 'Copied!';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    async function sha256Base64(str) {
+      const data = new TextEncoder().encode(str);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      const bytes = new Uint8Array(hash);
+      return 'sha256-' + btoa(String.fromCharCode.apply(null, bytes));
+    }
+
+    function extractInlineScripts(html) {
+      const scripts = [];
+      const regex = /<script(\s[^>]*)?>([^]*?)<\/script>/gi;
+      let match;
+      while ((match = regex.exec(html)) !== null) {
+        const attrs = match[1] || '';
+        if (/\bsrc\s*=/i.test(attrs)) continue;
+        const content = match[2];
+        if (content.trim()) scripts.push(content);
+      }
+      return scripts;
+    }
+
+    async function processFile(file) {
+      if (!file) return;
+      const html = await file.text();
+      const scripts = extractInlineScripts(html);
+
+      if (scripts.length === 0) {
+        result.innerHTML = '<div class="empty">No inline scripts found in this file.</div>';
+        return;
+      }
+
+      const hashes = await Promise.all(scripts.map(sha256Base64));
+      const allHashes = hashes.join(' ');
+
+      let out = `<div style="color:#666;font-size:0.8rem;margin-bottom:16px;">
+        ${scripts.length} inline script(s) found in <strong style="color:#e0e0e0">${file.name}</strong>
+      </div>`;
+
+      scripts.forEach((script, i) => {
+        const preview = script.trim().replace(/\s+/g, ' ').slice(0, 120);
+        out += `
+          <div class="script-block">
+            <div class="script-header">
+              <span>Script #${i + 1}</span>
+              <button class="copy-btn" data-hash="${hashes[i]}">Copy hash</button>
+            </div>
+            <div class="hash-line">${hashes[i]}</div>
+            <div class="preview">${preview}…</div>
+          </div>`;
+      });
+
+      out += `
+        <div class="csp-label">All hashes for CSP:</div>
+        <div class="csp-output">${allHashes}</div>
+        <button class="copy-all-btn" id="copyAll">Copy all hashes</button>`;
+
+      result.innerHTML = out;
+
+      result.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          navigator.clipboard.writeText(btn.dataset.hash).then(() => showToast('Copied!'));
+        });
+      });
+
+      document.getElementById('copyAll').addEventListener('click', () => {
+        navigator.clipboard.writeText(allHashes).then(() => showToast('All hashes copied!'));
+      });
+    }
+  </script>
+</body>
+</html>
