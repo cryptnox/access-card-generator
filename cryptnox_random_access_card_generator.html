@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'none';
-    script-src 'self' 'sha256-oPe60omGaXHr4Rxtvtluw/hIxpFtRMDwLR8HuaL06kg=' 'sha256-xB5+CnZ0X+4Z4SScAC9jVlEaxqk+8fV21OOqEdfWQbU=' 'sha256-IRJQaJA3iRsMXb4Nkj9U483KZhSPCBNtyEtzVeHm/FM=' 'sha256-ExuJ+x+ks06E4tmoq7CRWpwtekQNg3iAuS7YXsi1vlU=';
+    script-src 'self' 'sha256-oPe60omGaXHr4Rxtvtluw/hIxpFtRMDwLR8HuaL06kg=' 'sha256-xB5+CnZ0X+4Z4SScAC9jVlEaxqk+8fV21OOqEdfWQbU=' 'sha256-IRJQaJA3iRsMXb4Nkj9U483KZhSPCBNtyEtzVeHm/FM=' 'sha256-UTW2XbJC3MjiTMb1OFuvEsFACTYaJZ60zT4+UXeYPUg=';
     style-src 'self' 'unsafe-inline';
     img-src 'self' data: blob:;
     font-src 'self' data:;
@@ -1520,9 +1520,7 @@
     })();
 
     // Fixed settings
-    const PIN_LENGTH = 9;
     const PUK_LENGTH = 12;
-    const COUNT = 1;
 
     // Character set for PUK generation (excludes ambiguous: 0,1,O,o,I,l,L,S,s,B,Z and special chars)
     const characters =
@@ -1743,12 +1741,12 @@
       let imgHeightQrCode = qrCode.naturalHeight;
       const ratioQrCode = Math.min(maxWidthQrCode / imgWidthQrCode, maxHeightQrCode / imgHeightQrCode);
       imgWidthQrCode *= ratioQrCode;
-      imgWidthQrCode *= ratioQrCode;
+      imgHeightQrCode *= ratioQrCode;
 
       // Position (centered top-left at 10,10 for example)
       doc.addImage(imgData, "PNG", 115, 65, imgWidthLogo, imgHeightLogo);
 
-      doc.addImage(imgDataQrCode, "PNG", 55, 105, imgWidthQrCode, imgWidthQrCode);
+      doc.addImage(imgDataQrCode, "PNG", 55, 105, imgWidthQrCode, imgHeightQrCode);
 
       // Subtitles
       doc.setFont("helvetica", "normal");
