@@ -1533,9 +1533,7 @@
     })();
 
     // Fixed settings
-    const PIN_LENGTH = 9;
     const PUK_LENGTH = 12;
-    const COUNT = 1;
 
     // Character set for PUK generation (excludes ambiguous: 0,1,O,o,I,l,L,S,s,B,Z and special chars)
     const characters =
@@ -1756,12 +1754,12 @@
       let imgHeightQrCode = qrCode.naturalHeight;
       const ratioQrCode = Math.min(maxWidthQrCode / imgWidthQrCode, maxHeightQrCode / imgHeightQrCode);
       imgWidthQrCode *= ratioQrCode;
-      imgWidthQrCode *= ratioQrCode;
+      imgHeightQrCode *= ratioQrCode;
 
       // Position (centered top-left at 10,10 for example)
       doc.addImage(imgData, "PNG", 115, 65, imgWidthLogo, imgHeightLogo);
 
-      doc.addImage(imgDataQrCode, "PNG", 55, 105, imgWidthQrCode, imgWidthQrCode);
+      doc.addImage(imgDataQrCode, "PNG", 55, 105, imgWidthQrCode, imgHeightQrCode);
 
       // Subtitles
       doc.setFont("helvetica", "normal");

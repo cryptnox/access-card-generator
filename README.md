@@ -2,7 +2,7 @@
   <img src="https://github.com/user-attachments/assets/6ce54a27-8fb6-48e6-9d1f-da144f43425a"/>
 </p>
 
-<h3 align="center">Access card generator</h3>
+<h3 align="center">access-card-generator</h3>
 <p align="center">Secure offline generator for QR access cards</p>
 
 <br/>
