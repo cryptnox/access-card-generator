@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'none';
-    script-src 'self' 'sha256-oPe60omGaXHr4Rxtvtluw/hIxpFtRMDwLR8HuaL06kg=' 'sha256-xB5+CnZ0X+4Z4SScAC9jVlEaxqk+8fV21OOqEdfWQbU=' 'sha256-OE8+IrFTik58ZFC6hZXNdvZepHjU1KfluMm0BLwfpcM=' 'sha256-IRJQaJA3iRsMXb4Nkj9U483KZhSPCBNtyEtzVeHm/FM=' 'sha256-ghI9Grz72vK6fq2GQnx3+CUuBaQhCnuVidsdwytLAzk=';
+    script-src 'self' 'sha256-oPe60omGaXHr4Rxtvtluw/hIxpFtRMDwLR8HuaL06kg=' 'sha256-xB5+CnZ0X+4Z4SScAC9jVlEaxqk+8fV21OOqEdfWQbU=' 'sha256-OE8+IrFTik58ZFC6hZXNdvZepHjU1KfluMm0BLwfpcM=' 'sha256-IRJQaJA3iRsMXb4Nkj9U483KZhSPCBNtyEtzVeHm/FM=' 'sha256-1z/bjR228qgqBq8N+RbcINJOgkJJthnjd0EQn1mfj5A=';
     style-src 'self' 'unsafe-inline';
     img-src 'self' data: blob:;
     font-src 'self' data:;
@@ -1738,8 +1738,8 @@
       // Max dimensions scaled to ISO/IEC 7810 card size
       const maxWidthLogo = 32;
       const maxHeightLogo = 6.1;
-      const maxWidthQrCode = 40;
-      const maxHeightQrCode = 40;
+      const maxWidthQrCode = 14;
+      const maxHeightQrCode = 14;
 
       // Scale proportionally
       let imgWidthLogo = cardFrontLogo.naturalWidth;
